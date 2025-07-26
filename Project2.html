@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Weather App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      color: white;
+      padding: 50px;
+    }
+    .weather-box {
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: auto;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 10px;
+      width: 80%;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      background-color: #005bea;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0040c1;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-box">
+    <h2>🌤️ Weather App</h2>
+    <input type="text" id="city" placeholder="Enter city name" />
+    <br />
+    <button onclick="getWeather()">Get Weather</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById('city').value.trim();
+      const resultDiv = document.getElementById('result');
+
+      if (!city) {
+        resultDiv.innerText = 'Please enter a city name.';
+        return;
+      }
+
+      const apiKey = '499a42741ce6963d026a382dd05d10c1'; // API key as a string
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${apiKey}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+
+        if (data.cod === 200) {
+          resultDiv.innerHTML = `
+            <h3>${data.name}, ${data.sys.country}</h3>
+            <p><strong>Temperature:</strong> ${data.main.temp} °C</p>
+            <p><strong>Weather:</strong> ${data.weather[0].description}</p>
+          `;
+        } else if (data.cod === '404') {
+          resultDiv.innerText = 'City not  found';
+        } else if (data.cod === 401) {
+          resultDiv.innerText = 'Invalid API key!';
+        } else {
+          resultDiv.innerText = `Error: ${data.message}`;
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        resultDiv.innerText = 'Error fetching weather data.';
+      }
+    }
+  </script>
+</body>c
+</html>
